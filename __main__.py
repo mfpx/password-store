@@ -34,8 +34,10 @@ class Menu(Options):
                     f"WARNING: getpass module returned: {gpw}\nPassword input will be done in CLEARTEXT!")
                 password = input("Password: ")
 
-        hmac_pwd = hmac.new(bytes(password, 'utf-8'), bytes(username, 'utf-8'), 'sha512').hexdigest()
+        hmac_pwd = hmac.new(bytes(password, 'utf-8'),
+                            bytes(username, 'utf-8'), 'sha512').hexdigest()
         # note: create a hmac with username as the message and password as password; use mysql PASSWORD() to hash it
+        # hash of choice is sha512
         login_result = self.__login(
             {'username': username, 'password': hmac_pwd})
         if login_result == False:
