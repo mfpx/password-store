@@ -32,6 +32,8 @@ class Menu(Options):
         login_result = self.__login({'username': username, 'password': password})
         if login_result == False:
             self.__init__()
+        else:
+            print(login_result)
             
 
     def menu(self) -> None:

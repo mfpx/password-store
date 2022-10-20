@@ -15,7 +15,7 @@ class Login:
             'operation': 'conditional_select',
             'table': 'users',
             'condition': '`username` = %s AND `master_password` = %s',
-            'columns': ['username', 'created'],
+            'columns': ['username', 'created', 'uid'],
             'data': (self.username, self.password)
         })
 
