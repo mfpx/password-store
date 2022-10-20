@@ -14,7 +14,7 @@ class Login:
         result = queries.select_data({
             'operation': 'conditional_select',
             'table': 'users',
-            'condition': '`username` = %s AND `master_password` = %s',
+            'condition': '`username` = %s AND `master_password` = PASSWORD(%s)',
             'columns': ['username', 'created', 'uid'],
             'data': (self.username, self.password)
         })

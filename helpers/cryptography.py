@@ -39,9 +39,9 @@ class Encryption:
             cipher.update(header)
             ciphertext, tag = cipher.encrypt_and_digest(data)
             return self.__to_json_bytes({'ciphertext': b64encode(ciphertext).decode('utf-8'),
-                    'tag': b64encode(tag).decode('utf-8'),
-                    'nonce': b64encode(cipher.nonce).decode('utf-8'),
-                    'header': b64encode(header).decode('utf-8')})
+                                         'tag': b64encode(tag).decode('utf-8'),
+                                         'nonce': b64encode(cipher.nonce).decode('utf-8'),
+                                         'header': b64encode(header).decode('utf-8')})
 
 
 enc = Encryption({'hello': 'world'}, 'DXuU9txyqvo0b3f3X0CXUvFHnE980SK9')

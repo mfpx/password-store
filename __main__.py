@@ -1,7 +1,10 @@
 from typing import Any, Callable
-import connector, login
+import connector
+import login
+import hmac
 from tabulate import tabulate
 from getpass import GetPassWarning, getpass
+
 
 class Options:
 
@@ -9,9 +12,10 @@ class Options:
         option = f'menu_item_{opt}'
         func = type(self).__dict__.get(option)
         if hasattr(func, '__call__'):
-            return func(self) # type: ignore
+            return func(self)  # type: ignore
 
         raise ValueError(f'Unknown class function {opt}')
+
 
 class Menu(Options):
 
@@ -26,15 +30,18 @@ class Menu(Options):
             try:
                 password = getpass("Password: ")
             except GetPassWarning as gpw:
-                print(f"WARNING: getpass module returned: {gpw}\nPassword input will be done in CLEARTEXT!")
+                print(
+                    f"WARNING: getpass module returned: {gpw}\nPassword input will be done in CLEARTEXT!")
                 password = input("Password: ")
 
-        login_result = self.__login({'username': username, 'password': password})
+        hmac_pwd = hmac.new(bytes(password, 'utf-8'), bytes(username, 'utf-8'), 'sha512').hexdigest()
+        # note: create a hmac with username as the message and password as password; use mysql PASSWORD() to hash it
+        login_result = self.__login(
+            {'username': username, 'password': hmac_pwd})
         if login_result == False:
             self.__init__()
         else:
             print(login_result)
-            
 
     def menu(self) -> None:
         print("hello")
@@ -47,6 +54,6 @@ class Menu(Options):
         else:
             return res
 
-        
+
 menu = Menu()
 menu.menu()
