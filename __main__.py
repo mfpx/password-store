@@ -1,7 +1,7 @@
 import sys
 from time import sleep
 from typing import Any, Callable
-from helpers import credential_manager
+from helpers import credential_manager as credman
 import querylib
 import hmac
 from tabulate import tabulate
@@ -15,7 +15,7 @@ class Options:
         option = f'menu_item_{opt}'
         func = type(self).__dict__.get(option)
         if hasattr(func, '__call__'):
-            return func(self, args)  # type: ignore
+            return func(self, args)
 
         raise ValueError(f'Unknown class function {opt}')
 
@@ -57,7 +57,21 @@ class Menu(Options):
 
     def menu_item_1(self, username: str):
         creds = querylib.Credentials(username)
-        print(creds.get())
+        data = creds.get()
+        decrypted = credman.CredentialSecurity().decrypt(data[0]['data'], self.password)
+        print(decrypted)
+        print(tabulate(decrypted, headers='keys', tablefmt='grid'))
+
+    def menu_item_2(self, username: str):
+        self.clear()
+        print("1. Search credentials\n2. Add credentials\n3. Delete credentials")
+        choice = input("> ")
+        if choice not in ['1', '2', '3']:
+            print("Invalid choice")
+            sleep(2)
+        elif choice == '1':
+            print("Not implemented")
+            pass
 
     def menu(self) -> None:
         self.clear()
@@ -71,7 +85,6 @@ class Menu(Options):
         elif choice == '3':
             sys.exit(0)
         else:
-            print(self.username)
             self.call_selection(choice, self.username)
 
     def __login(self, credentials: dict) -> bool | tuple:
