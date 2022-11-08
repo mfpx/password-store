@@ -44,7 +44,7 @@ class Encryption:
                                          'header': b64encode(header).decode('utf-8')})
 
 
-enc = Encryption({'hello': 'world'}, 'DXuU9txyqvo0b3f3X0CXUvFHnE980SK9')
+enc = Encryption({'hello': 'world', 'key': 'value'}, 'DXuU9txyqvo0b3f3X0CXUvFHnE980SK9')
 encrypted = enc.encrypt()
 print(encrypted)
 

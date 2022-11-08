@@ -37,14 +37,14 @@ class Credentials:
                 'table': 'users',
                 'condition': '`username` = %s',
                 'columns': ['uid'],
-                'data': (self.username)
+                'data': (username)
             })
 
             return result
         else:
             return self.uid
 
-    def get(self) -> list:
+    def get(self) -> str:
         dbptr = connector.DatabaseConnector().get_connection_object()
         queries = connector.DatabaseQueries(dbptr)
 
