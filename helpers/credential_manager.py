@@ -1,12 +1,15 @@
 from datetime import datetime
 from string import ascii_letters
-from . import cryptography
 import time
 import hmac
 import json
 from os.path import exists
 from types import NoneType
 
+try:
+    from . import cryptography
+except ImportError:
+    import cryptography
 
 class CredentialSecurity:
 
@@ -27,12 +30,34 @@ class CredentialCache:
     def __init__(self, force_new_cache: bool = False) -> None:
         self.force_new_cache = force_new_cache
 
+    """
+    Checks the time difference between current UNIX epoch and the timestamp in the cache file
+    """
+    def check_validity(self, str = ".cache") -> bool:
+        cache_data = self.read_cache(str)
+        time_since_epoch = time.mktime(datetime.now().timetuple())
+        if cache_data == None or cache_data == False:
+            return False
+        else:
+            difference = time_since_epoch - float(cache_data['timestamp']) # time difference in seconds
+            if difference >= 86400: # 24hrs in seconds
+                print(f'Difference in hours is: ~{round(difference/3600)}\nDifference in seconds is: {round(difference)}')
+                return False
+            else:
+                return True
+
+    """
+    Reads the cache file and parses the JSON-formatted contents
+    """
     def read_cache(self, path: str = ".cache") -> dict | bool | NoneType:
         cache_present = exists(path)
 
         if cache_present:
             with open(path, 'r') as cache_file:
-                cache_data = json.loads(cache_file.read())
+                try:
+                    cache_data = json.loads(cache_file.read())
+                except json.JSONDecodeError as ex:
+                    print(f"Unable to read the cache file: {ex}")
             return cache_data
         elif self.force_new_cache:
             return False
@@ -61,3 +86,4 @@ print(cs.hash('david', 'DXuU9txyqvo0b3f3X0CXUvFHnE980SK9'))
 
 cache = CredentialCache(False)
 cache.write_cache({'timestamp': time.mktime(datetime.now().timetuple()), 'uid': 10})
+print(cache.check_validity())

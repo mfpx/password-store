@@ -50,9 +50,9 @@ class Menu(Options):
             print(login_result)
 
     def clear(self) -> None:
-        if name == 'nt':  # win nt
+        if name == 'nt': # windows
             system('cls')
-        else:  # posix-compliant systems
+        else: # posix-compliant systems
             system('clear')
 
     def menu_item_1(self, username: str):
@@ -78,7 +78,7 @@ class Menu(Options):
         print("Welcome!\nPlease select an option\n")
         print("1. Show credentials\n2. Manage credentials\n3. Logout")
         choice = input("> ")
-        if choice not in ['1', '2', '3']:
+        if choice not in ['1', '2', '3']: # ideally should enumerate all choices automatically, instead of making a list
             print("Invalid choice")
             sleep(2)
             self.menu()
@@ -89,11 +89,15 @@ class Menu(Options):
 
     def __login(self, credentials: dict) -> bool | tuple:
         lc = querylib.Login(credentials['username'], credentials['password'])
-        res = lc.authenticate()
-        if len(res) == 0:
-            return False
-        else:
-            return res
+        try:
+            res = lc.authenticate()
+            if len(res) == 0:
+                return False
+            else:
+                return res
+        except Exception as ex:
+            print("Connection failed, see the above error message")
+            sys.exit(1)
 
 
 menu = Menu()

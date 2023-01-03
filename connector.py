@@ -10,22 +10,20 @@ import pymysql.cursors
 import os
 import datetime
 from mysql.connector import errorcode
-from dotenv import load_dotenv
+from helpers import env_loader as lde
 
-load_dotenv()  # Load the dotenv file
+loadenv = lde.LoadDotEnv()
 
 # Global defines for MySQL database from dotenv
-USERNAME = os.getenv('USERNAME')
-PASSWORD = os.getenv('PASSWORD')
-HOST = os.getenv('HOST')
-PORT = os.getenv('PORT')
-DATABASE = os.getenv('DATABASE')
+USERNAME = loadenv('USERNAME')
+PASSWORD = loadenv('PASSWORD')
+HOST = loadenv('HOST')
+PORT = loadenv('PORT')
+DATABASE = loadenv('DATABASE')
 
 """
 Main connector class for MySQL/MariaDB connections
 """
-
-
 class DatabaseConnector:
 
     # Init the database connection
@@ -87,7 +85,9 @@ class DatabaseQueries:
     # INSERT Format: {'operation': 'insert', 'table': 'name', 'data': {'some': 'data', 'goes': 'here'}}
     # SELECT Format: {'operation': 'select', 'table': 'name', 'columns': ['col1', 'col2']}
     # CONDITIONAL SELECT Format: {'operation': 'conditional_select', 'table': 'name', 'condition': 'string', 'columns': ['col1', 'col2']}
-    # TODO: Deletion and updating
+    # CONDITIONAL DELETE Format: {'operation': 'conditional_delete', 'table': 'name', 'condition': 'string'}
+    # UPDATE Format: {'operation': 'update', 'table': 'name', 'condition': 'string', 'data': {'some': 'data', 'goes': 'here'}}
+    # TODO: Updating
     def __construct_query(self, data: dict) -> str:
         query_out = ""
         temp_keys = []
@@ -111,6 +111,16 @@ class DatabaseQueries:
 
             query_out += f"SELECT {', '.join(list(data['columns']))} "
             query_out += f"FROM {table} WHERE {condition}"
+
+        elif data['operation'] == 'conditional_delete':
+            condition = data['condition']
+
+            query_out += f"DELETE FROM {table} WHERE {condition}"
+
+        elif data['operation'] == 'update':
+            condition = data['condition']
+
+            query_out += f"UPDATE {table} SET"
 
         else:
             raise NotImplementedError(
