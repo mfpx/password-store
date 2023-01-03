@@ -73,16 +73,50 @@ class Menu(Options):
             print("Not implemented")
             pass
 
+    def menu_item_3(self):
+        self.clear()
+        print("Please select an option\n")
+        print("1. Caching\n2. Main menu")
+        choice = input("> ")
+        if choice not in ['1']:
+            print("Invalid choice")
+            sleep(2)
+            self.menu_item_3()
+        elif choice == '2':
+            self.menu()
+        else:
+            self.call_selection('3' + choice)
+
+    def menu_item_31(self):
+        self.clear()
+        print("Please select an option\n")
+        print("1. Turn on credential caching\n2. Turn off credential caching\n3. Back to settings")
+        choice = input("> ")
+        if choice not in ['1', '2', '3']:
+            print("Invalid choice")
+            sleep(2)
+            self.menu_item_31()
+        elif choice == '3':
+            self.menu_item_3()
+        else:
+            self.call_selection('31' + choice)
+
+    def menu_item_311(self):
+        pass #TODO
+
+    def menu_item_312(self):
+        pass #TODO
+
     def menu(self) -> None:
         self.clear()
         print("Welcome!\nPlease select an option\n")
-        print("1. Show credentials\n2. Manage credentials\n3. Logout")
+        print("1. Show credentials\n2. Manage credentials\n3. Settings\n4. Logout")
         choice = input("> ")
-        if choice not in ['1', '2', '3']: # ideally should enumerate all choices automatically, instead of making a list
+        if choice not in ['1', '2', '3', '4']: # ideally should enumerate all choices automatically, instead of making a list
             print("Invalid choice")
             sleep(2)
             self.menu()
-        elif choice == '3':
+        elif choice == '4':
             sys.exit(0)
         else:
             self.call_selection(choice, self.username)

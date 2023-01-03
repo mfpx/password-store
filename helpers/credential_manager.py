@@ -4,8 +4,11 @@ import time
 import hmac
 import json
 from os.path import exists
-from types import NoneType
+import os
+import pwd
+from stat import *
 
+# Relative imports break when running the file directly
 try:
     from . import cryptography
 except ImportError:
@@ -49,7 +52,7 @@ class CredentialCache:
     """
     Reads the cache file and parses the JSON-formatted contents
     """
-    def read_cache(self, path: str = ".cache") -> dict | bool | NoneType:
+    def read_cache(self, path: str = ".cache") -> dict | bool | None:
         cache_present = exists(path)
 
         if cache_present:
@@ -64,6 +67,29 @@ class CredentialCache:
         else:
             return None
 
+    """
+    Reads the cache file permissions and changes them if necessary
+    """
+    def __set_file_perms(self, str = ".cache") -> None:
+        mode = os.stat(str)
+        uid = pwd.getpwnam(os.getenv('USER')).pw_uid
+        gid = pwd.getpwnam(os.getenv('USER')).pw_gid
+
+        if mode.st_uid != uid:
+            os.chown(path = str, uid = pwd.getpwnam(os.getenv('USER')).pw_uid)
+        
+        if mode.st_gid != gid:
+            os.chown(path = str, gid = pwd.getpwnam(os.getenv('USER')).pw_gid)
+
+        if mode.st_mode & S_IRGRP == 0 and mode.st_mode & S_IROTH == 0:
+            if mode.st_mode & S_IWUSR <= 0 and mode.st_mode & S_IRUSR <= 0:
+                os.chmod(str, S_IWUSR + S_IRUSR) # O:RW-, G:---, P:---
+        else:
+            os.chmod(str, S_IWUSR + S_IRUSR) # O:RW-, G:---, P:---
+
+    """
+    Writes data to the cache file if appropriate
+    """
     def write_cache(self, data: dict, path: str = ".cache") -> None | bool:
         cache_present = exists(path)
 
@@ -78,8 +104,8 @@ class CredentialCache:
                     print(json.dumps(data))
                     cache_file.write(json.dumps(data))
                 cache_file.close()
-
-
+                self.__set_file_perms(str)
+                
 
 cs = CredentialSecurity()
 print(cs.hash('david', 'DXuU9txyqvo0b3f3X0CXUvFHnE980SK9'))
