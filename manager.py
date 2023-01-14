@@ -130,6 +130,7 @@ class Menu(Options):
             else:
                 return res
         except Exception as ex:
+            print(ex)
             print("Connection failed, see the above error message")
             sys.exit(1)
 

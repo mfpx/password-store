@@ -15,11 +15,11 @@ from helpers import env_loader as lde
 loadenv = lde.LoadDotEnv()
 
 # Global defines for MySQL database from dotenv
-USERNAME = loadenv('USERNAME')
-PASSWORD = loadenv('PASSWORD')
-HOST = loadenv('HOST')
-PORT = loadenv('PORT')
-DATABASE = loadenv('DATABASE')
+USERNAME = loadenv()['USERNAME']
+PASSWORD = loadenv()['PASSWORD']
+HOST = loadenv()['HOST']
+PORT = loadenv()['PORT']
+DATABASE = loadenv()['DATABASE']
 
 """
 Main connector class for MySQL/MariaDB connections
